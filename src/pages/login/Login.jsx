@@ -1,4 +1,4 @@
-import { GoogleAuthProvider, getAuth, signInWithPopup, signOut } from "firebase/auth";
+import { GithubAuthProvider, GoogleAuthProvider, getAuth, signInWithPopup, signOut } from "firebase/auth";
 import app from "../../firebase/firebase.init";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -8,12 +8,13 @@ const Login = () => {
     const [user, setUser] = useState(null);
     const navigate = useNavigate();
     const auth = getAuth(app);
-    console.log(app);
-    const provider = new GoogleAuthProvider();
+    // console.log(app);
+    const googleProvider = new GoogleAuthProvider();
+    const githubProvider = new GithubAuthProvider();
 
     const handleGoogleAuthSignIn = () => {
         // console.log(`google mama is coming`)
-        signInWithPopup(auth, provider)
+        signInWithPopup(auth, googleProvider)
             .then(result => {
                 const user = result.user;
                 console.log(user);
@@ -23,6 +24,18 @@ const Login = () => {
             .catch(error => {
                 console.log(`error ${error.message}`);
             });
+    }
+
+    const handleGithubAuthSignIn = () => {
+        signInWithPopup(auth, githubProvider)
+        .then(result => {
+            const loggedUser = result.user;
+            console.log(loggedUser);
+            setUser(loggedUser);
+        })
+        .catch(error => {
+            console.log(`error ${error.message}`);
+        })
     }
 
     const handleSignOut = () => {
@@ -52,7 +65,11 @@ const Login = () => {
                     <button onClick={handleSignOut}>sign Out</button>
                 </section>
                 :
-                <button onClick={handleGoogleAuthSignIn}>Login with Google</button>
+                <section>
+                    <button className="border-2 mr-4" onClick={handleGoogleAuthSignIn}>Login with Google</button>
+                    <button className="border-2 mr-4" onClick={handleGithubAuthSignIn}>Login with Github</button>
+                </section>
+
             }
         </div>
     );
